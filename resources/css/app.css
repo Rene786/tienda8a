@@ -1,0 +1,83 @@
+@import 'tailwindcss';
+@import '../../vendor/livewire/flux/dist/flux.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+    --color-blue-500: #2563EB;
+    --color-blue-600: #1D4ED8;
+    --color-green-500: #16A34A;
+    --color-green-600: #15803D;
+}
+
+:root {
+    --techstore-background: #F8FAFC;
+    --techstore-surface: #FFFFFF;
+    --techstore-navy: #0F172A;
+    --techstore-blue: #2563EB;
+    --techstore-blue-hover: #1D4ED8;
+    --techstore-green: #16A34A;
+    --techstore-text: #1E293B;
+    --techstore-border: #E2E8F0;
+}
+
+.dark {
+    --techstore-background: #0B1220;
+    --techstore-surface: #111C31;
+    --techstore-text: #E2E8F0;
+    --techstore-border: #27364D;
+}
+
+@layer theme {
+    :root,
+    .dark {
+        --color-accent: var(--techstore-blue);
+        --color-accent-content: var(--techstore-blue);
+        --color-accent-foreground: #FFFFFF;
+    }
+}
+
+body {
+    min-height: 100vh;
+    background-color: var(--techstore-background);
+    color: var(--techstore-text);
+    font-family: var(--font-sans);
+}
+
+header {
+    position: relative;
+}
+
+header::after {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #2563EB 0%, #38BDF8 55%, #16A34A 100%);
+    content: '';
+}
+
+header [data-flux-navbar-items] {
+    color: #E2E8F0;
+    transition: background-color 150ms ease, color 150ms ease;
+}
+
+header [data-flux-navbar-items]:hover,
+header [data-flux-navbar-items][data-current] {
+    color: #FFFFFF;
+    background-color: rgb(37 99 235 / 0.2);
+}
+
+header [data-flux-navbar-items][data-current]::after {
+    background-color: #60A5FA;
+}
+
+.techstore-primary-button:hover {
+    background-color: var(--techstore-blue-hover);
+}
