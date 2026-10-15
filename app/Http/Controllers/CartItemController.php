@@ -21,7 +21,7 @@ class CartItemController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('cart_items.index', compact('cartItems'));
+        return view('admin.carts.items.index', compact('cartItems'));
     }
 
     public function create(): View
@@ -29,7 +29,7 @@ class CartItemController extends Controller
         $carts = Cart::with('user')->latest()->get();
         $products = Product::where('status', true)->orderBy('name')->get();
 
-        return view('cart_items.create', compact('carts', 'products'));
+        return view('admin.carts.items.create', compact('carts', 'products'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -66,7 +66,7 @@ class CartItemController extends Controller
         $carts = Cart::withTrashed()->with('user')->latest()->get();
         $products = Product::withTrashed()->orderBy('name')->get();
 
-        return view('cart_items.edit', compact('cartItem', 'carts', 'products'));
+        return view('admin.carts.items.edit', compact('cartItem', 'carts', 'products'));
     }
 
     public function update(Request $request, CartItem $cartItem): RedirectResponse

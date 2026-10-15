@@ -23,7 +23,7 @@ class OrderItemController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('order_items.index', compact('orderItems'));
+        return view('admin.orders.items.index', compact('orderItems'));
     }
 
     public function create(): View
@@ -31,7 +31,7 @@ class OrderItemController extends Controller
         $orders = Order::latest()->get();
         $products = Product::where('status', true)->orderBy('name')->get();
 
-        return view('order_items.create', compact('orders', 'products'));
+        return view('admin.orders.items.create', compact('orders', 'products'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -64,7 +64,7 @@ class OrderItemController extends Controller
         $orders = Order::withTrashed()->latest()->get();
         $products = $this->productsForEdit($orderItem);
 
-        return view('order_items.edit', compact('orderItem', 'orders', 'products'));
+        return view('admin.orders.items.edit', compact('orderItem', 'orders', 'products'));
     }
 
     public function update(Request $request, OrderItem $orderItem): RedirectResponse

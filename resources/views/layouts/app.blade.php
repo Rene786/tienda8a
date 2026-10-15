@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#0F172A">
-    <title>{{ $title ?? 'TechStore' }}</title>
 
+    <title>{{ $title ?? 'TechStore' }}</title>
+    
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @fluxAppearance
@@ -42,6 +43,12 @@
                     <flux:navbar.item href="{{ route('orders.index') }}">Pedidos</flux:navbar.item>
                     <flux:navbar.item href="{{ route('order-items.index') }}">Artículos de pedido</flux:navbar.item>
                     <flux:navbar.item href="{{ route('users.index') }}">Usuarios</flux:navbar.item>
+                </flux:navbar>
+            @else
+                <flux:navbar scrollable class="-my-px">
+                    <flux:navbar.item href="{{ url('/') }}">Inicio</flux:navbar.item>
+                    <flux:navbar.item href="{{ route('about') }}">Acerca de nosotros</flux:navbar.item>
+                    <flux:navbar.item href="{{ route('contact') }}">Contacto</flux:navbar.item>
                 </flux:navbar>
             @endauth
         </div>

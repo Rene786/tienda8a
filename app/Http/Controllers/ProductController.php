@@ -16,12 +16,12 @@ class ProductController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('products.index', compact('products'));
+        return view('admin.products.index', compact('products'));
     }
 
     public function create(): View
     {
-        return view('products.create');
+        return view('admin.products.create');
     }
 
     public function store(Request $request): RedirectResponse
@@ -65,7 +65,7 @@ class ProductController extends Controller
     {
         $product = Product::findOrFail($id);
 
-        return view('products.edit', compact('product'));
+        return view('admin.products.edit', compact('product'));
     }
 
     public function update(Request $request, int $id): RedirectResponse

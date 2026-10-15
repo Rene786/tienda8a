@@ -41,7 +41,7 @@
             </flux:card>
         </div>
 
-        <section class="grid gap-5 sm:grid-cols-2">
+        {{-- <section class="grid gap-5 sm:grid-cols-2">
             <a href="{{ route('products.index') }}" class="group block">
                 <flux:card class="h-full transition hover:border-blue-400 hover:shadow-md">
                     <flux:badge color="blue">Catálogo</flux:badge>
@@ -58,6 +58,6 @@
                     <p class="mt-5 text-sm font-medium text-blue-600 group-hover:text-blue-700">Ver categorías →</p>
                 </flux:card>
             </a>
-        </section>
+        </section> --}}
     </section>
 </x-layouts::app>

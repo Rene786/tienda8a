@@ -18,14 +18,14 @@ class ProductFileController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('product_files.index', compact('productFiles'));
+        return view('admin.products.files.index', compact('productFiles'));
     }
 
     public function create(): View
     {
         $products = Product::where('status', true)->orderBy('name')->get();
 
-        return view('product_files.create', compact('products'));
+        return view('admin.products.files.create', compact('products'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -46,7 +46,7 @@ class ProductFileController extends Controller
     {
         $products = $this->productsForEdit($productFile);
 
-        return view('product_files.edit', compact('productFile', 'products'));
+        return view('admin.products.files.edit', compact('productFile', 'products'));
     }
 
     public function update(Request $request, ProductFile $productFile): RedirectResponse

@@ -22,7 +22,7 @@ class OrderController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('orders.index', compact('orders'));
+        return view('admin.orders.index', compact('orders'));
     }
 
     public function create(): View
@@ -31,7 +31,7 @@ class OrderController extends Controller
         $orderStatuses = self::ORDER_STATUSES;
         $paymentStatuses = self::PAYMENT_STATUSES;
 
-        return view('orders.create', compact('users', 'orderStatuses', 'paymentStatuses'));
+        return view('admin.orders.create', compact('users', 'orderStatuses', 'paymentStatuses'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -56,7 +56,7 @@ class OrderController extends Controller
         $orderStatuses = self::ORDER_STATUSES;
         $paymentStatuses = self::PAYMENT_STATUSES;
 
-        return view('orders.edit', compact('order', 'users', 'orderStatuses', 'paymentStatuses'));
+        return view('admin.orders.edit', compact('order', 'users', 'orderStatuses', 'paymentStatuses'));
     }
 
     public function update(Request $request, Order $order): RedirectResponse

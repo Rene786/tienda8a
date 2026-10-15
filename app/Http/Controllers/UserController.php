@@ -14,12 +14,12 @@ class UserController extends Controller
     {
         $users = User::latest()->paginate(10);
 
-        return view('users.index', compact('users'));
+        return view('admin.users.index', compact('users'));
     }
 
     public function create(): View
     {
-        return view('users.create');
+        return view('admin.users.create');
     }
 
     public function store(Request $request): RedirectResponse
@@ -46,7 +46,7 @@ class UserController extends Controller
     {
         $user = User::findOrFail($id);
 
-        return view('users.edit', compact('user'));
+        return view('admin.users.edit', compact('user'));
     }
 
     public function update(Request $request, int $id): RedirectResponse

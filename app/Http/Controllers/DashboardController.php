@@ -16,7 +16,7 @@ class DashboardController extends Controller
 {
     public function index(): View
     {
-        return view('home', $this->metrics());
+        return view('admin.dashboard', $this->metrics());
     }
 
     public function report(string $metric): Response
@@ -30,7 +30,7 @@ class DashboardController extends Controller
             default => abort(404),
         };
 
-        return Pdf::loadView('reports_dashboard', [
+        return Pdf::loadView('admin.reports.dashboard', [
             'metric' => $metric,
             'report' => $report,
             'generatedAt' => now(),

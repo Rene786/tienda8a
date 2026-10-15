@@ -18,7 +18,7 @@ class CartController extends Controller
             ->latest()
             ->paginate(10);
 
-        return view('carts.index', compact('carts'));
+        return view('admin.carts.index', compact('carts'));
     }
 
     public function create(): View
@@ -27,7 +27,7 @@ class CartController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('carts.create', compact('users'));
+        return view('admin.carts.create', compact('users'));
     }
 
     public function store(Request $request): RedirectResponse
@@ -56,7 +56,7 @@ class CartController extends Controller
             ->orderBy('name')
             ->get();
 
-        return view('carts.edit', compact('cart', 'users'));
+        return view('admin.carts.edit', compact('cart', 'users'));
     }
 
     public function update(Request $request, int $id): RedirectResponse

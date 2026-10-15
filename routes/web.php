@@ -12,20 +12,38 @@ use App\Http\Controllers\ProductFileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
+//Rutas para clientes
+Route::get('/', function () {
+    return view('client.home');
+});
+route::get('/contact', function () {
+    return view('client.contact');
+})->name('contact');
+route::get('/about', function () {
+    return view('client.aboutUs');
+})->name('about');
+
+//sin usar
+route::get('/store', function () {
+    return view('client.store');
+})->name('store');
+
+//Rutas para autenticación
 Route::livewire('/login', 'auth.login')->name('login');
 
 Route::livewire('/register', 'auth.register')->name('register');
 
+
+//rutas para el dashboard y reportes
 Route::middleware('auth')->group(function () {
     Route::get('/home', [DashboardController::class, 'index'])->name('home');
     Route::get('/reports/dashboard/{metric}', [DashboardController::class, 'report'])
         ->whereIn('metric', ['daily-sales', 'monthly-sales', 'products', 'users', 'inventory'])
         ->name('reports.dashboard');
 });
+
+
 
 // Rutas para administrar productos
 Route::middleware('auth')->group(function () {
