@@ -14,7 +14,7 @@
         @if (session('error'))
             <flux:callout variant="danger" class="mb-4">{{ session('error') }}</flux:callout>
         @endif
-        <flux:table :paginate="$users">
+        <flux:table>
             <flux:table.columns>
                 <flux:table.column>Nombre</flux:table.column>
                 <flux:table.column>Correo electrónico</flux:table.column>
@@ -49,5 +49,8 @@
                 @endforelse
             </flux:table.rows>
         </flux:table>
+        @if ($users->hasPages())
+            <div class="mt-6">{{ $users->links() }}</div>
+        @endif
     </section>
 </x-layouts::app>

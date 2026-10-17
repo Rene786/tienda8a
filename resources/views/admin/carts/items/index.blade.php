@@ -11,7 +11,7 @@
         @if (session('success'))
             <flux:callout variant="success" class="mb-4">{{ session('success') }}</flux:callout>
         @endif
-        <flux:table :paginate="$cartItems">
+        <flux:table>
             <flux:table.columns>
                 <flux:table.column>Carrito / usuario</flux:table.column>
                 <flux:table.column>Producto</flux:table.column>
@@ -51,5 +51,8 @@
                 @endforelse
             </flux:table.rows>
         </flux:table>
+        @if ($cartItems->hasPages())
+            <div class="mt-6">{{ $cartItems->links() }}</div>
+        @endif
     </section>
 </x-layouts::app>

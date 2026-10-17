@@ -11,7 +11,7 @@
         @if (session('success'))
             <flux:callout variant="success" class="mb-4">{{ session('success') }}</flux:callout>
         @endif
-        <flux:table :paginate="$productFiles">
+        <flux:table>
             <flux:table.columns>
                 <flux:table.column>Nombre</flux:table.column>
                 <flux:table.column>Producto</flux:table.column>
@@ -29,7 +29,7 @@
                         </flux:table.cell>
                         <flux:table.cell>{{ $productFile->file_type ?: '—' }}</flux:table.cell>
                         <flux:table.cell>
-                            <flux:button href="{{ str_starts_with($productFile->file_path, 'http') ? $productFile->file_path : asset('storage/'.$productFile->file_path) }}" target="_blank" rel="noopener noreferrer" size="sm" variant="ghost">Ver archivo</flux:button>
+                            <flux:button href="{{ $productFile->isPdf() ? route('product-files.download', $productFile) : (str_starts_with($productFile->file_path, 'http') ? $productFile->file_path : asset('storage/'.$productFile->file_path)) }}" target="_blank" rel="noopener noreferrer" size="sm" variant="ghost">Ver archivo</flux:button>
                         </flux:table.cell>
                         <flux:table.cell>
                             <div class="flex items-center gap-2">
@@ -49,5 +49,8 @@
                 @endforelse
             </flux:table.rows>
         </flux:table>
+        @if ($productFiles->hasPages())
+            <div class="mt-6">{{ $productFiles->links() }}</div>
+        @endif
     </section>
 </x-layouts::app>

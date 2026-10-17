@@ -45,6 +45,11 @@ class User extends Authenticatable
         return $this->hasMany(Order::class);
     }
 
+    public function pdfDownloads(): HasMany
+    {
+        return $this->hasMany(PdfDownload::class);
+    }
+
     /**
      * Comprobar si el usuario es administrador.
      */

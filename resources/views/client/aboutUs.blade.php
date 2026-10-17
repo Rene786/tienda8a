@@ -68,39 +68,70 @@
             </flux:card>
         </section>
 
-        <section aria-labelledby="sitemap-title">
+        <section id="recorrido" aria-labelledby="sitemap-title">
             <flux:card class="overflow-hidden">
                 <div class="mx-auto max-w-3xl text-center">
-                    <flux:badge color="blue" class="mb-4">Cómo trabajamos</flux:badge>
+                    <flux:badge color="blue" class="mb-4">Recorrido y accesos directos</flux:badge>
                     <h2 id="sitemap-title" class="text-2xl font-semibold tracking-tight sm:text-3xl">Un recorrido claro por TechStore</h2>
+                    <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">Accede directamente al catálogo, sus nuevas opciones y las herramientas de gestión.</p>
                 </div>
 
                 <div aria-label="Mapa de sitio de TechStore" class="mx-auto mt-8 max-w-5xl">
                     <div class="flex justify-center">
-                        <div class="rounded-xl border border-blue-200 bg-blue-50 px-6 py-3 text-center font-semibold text-blue-900 dark:border-blue-900 dark:bg-blue-950 dark:text-blue-100">
+                        <a href="{{ url('/') }}" class="rounded-xl border border-blue-200 bg-blue-50 px-6 py-3 text-center font-semibold text-blue-900 transition hover:border-blue-400 dark:border-blue-900 dark:bg-blue-950 dark:text-blue-100">
                             Inicio
-                        </div>
+                        </a>
                     </div>
 
                     <div class="mx-auto my-4 h-6 w-px bg-blue-200 dark:bg-blue-800"></div>
 
                     <section aria-labelledby="public-pages-title" class="rounded-2xl border border-zinc-200 bg-zinc-50 p-5 dark:border-zinc-700 dark:bg-zinc-800/50">
                         <h3 id="public-pages-title" class="mb-4 text-center text-sm font-semibold uppercase tracking-wide text-zinc-600 dark:text-zinc-300">Páginas públicas</h3>
-                        <ul class="grid gap-3 sm:grid-cols-3">
+                        <ul class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                             <li>
-                                <div class="block rounded-xl border border-zinc-200 bg-white px-4 py-3 text-center font-medium dark:border-zinc-700 dark:bg-zinc-900">
+                                <a href="{{ route('about') }}" class="block rounded-xl border border-zinc-200 bg-white px-4 py-3 text-center font-medium transition hover:border-blue-400 hover:text-blue-700 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:text-blue-300">
                                     Acerca de nosotros
-                                </div>
+                                </a>
                             </li>
                             <li>
-                                <div class="block rounded-xl border border-zinc-200 bg-white px-4 py-3 text-center font-medium dark:border-zinc-700 dark:bg-zinc-900">
+                                <a href="{{ route('store') }}" class="block rounded-xl border border-zinc-200 bg-white px-4 py-3 text-center font-medium transition hover:border-blue-400 hover:text-blue-700 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:text-blue-300">
+                                    Catálogo y detalles de productos
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('store', ['sort' => 'featured']) }}" class="block rounded-xl border border-zinc-200 bg-white px-4 py-3 text-center font-medium transition hover:border-blue-400 hover:text-blue-700 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:text-blue-300">
+                                    Catálogo: productos destacados
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('store', ['sort' => 'name_asc']) }}" class="block rounded-xl border border-zinc-200 bg-white px-4 py-3 text-center font-medium transition hover:border-blue-400 hover:text-blue-700 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:text-blue-300">
+                                    Catálogo: orden A–Z
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('store', ['sort' => 'name_desc']) }}" class="block rounded-xl border border-zinc-200 bg-white px-4 py-3 text-center font-medium transition hover:border-blue-400 hover:text-blue-700 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:text-blue-300">
+                                    Catálogo: orden Z–A
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ url('/') }}#featured-products-title" class="block rounded-xl border border-zinc-200 bg-white px-4 py-3 text-center font-medium transition hover:border-blue-400 hover:text-blue-700 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:text-blue-300">
+                                    Carrusel de destacados
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('contact') }}" class="block rounded-xl border border-zinc-200 bg-white px-4 py-3 text-center font-medium transition hover:border-blue-400 hover:text-blue-700 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:text-blue-300">
+                                    Contacto
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{{ route('login') }}" class="block rounded-xl border border-zinc-200 bg-white px-4 py-3 text-center font-medium transition hover:border-blue-400 hover:text-blue-700 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:text-blue-300">
                                     Iniciar sesión
-                                </div>
+                                </a>
                             </li>
                             <li>
-                                <div class="block rounded-xl border border-zinc-200 bg-white px-4 py-3 text-center font-medium dark:border-zinc-700 dark:bg-zinc-900">
+                                <a href="{{ route('register') }}" class="block rounded-xl border border-zinc-200 bg-white px-4 py-3 text-center font-medium transition hover:border-blue-400 hover:text-blue-700 dark:border-zinc-700 dark:bg-zinc-900 dark:hover:text-blue-300">
                                     Crear cuenta
-                                </div>
+                                </a>
                             </li>
                         </ul>
                     </section>
@@ -155,6 +186,11 @@
                             <li>
                                 <div class="block rounded-xl border border-blue-200 bg-white px-4 py-3 text-center font-medium dark:border-blue-900 dark:bg-zinc-900">
                                     Usuarios
+                                </div>
+                            </li>
+                            <li>
+                                <div class="block rounded-xl border border-blue-200 bg-white px-4 py-3 text-center font-medium dark:border-blue-900 dark:bg-zinc-900">
+                                    Historial de descargas PDF
                                 </div>
                             </li>
                         </ul>

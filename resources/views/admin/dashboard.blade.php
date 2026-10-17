@@ -6,6 +6,7 @@
                 <h1 class="mt-3 text-3xl font-semibold tracking-tight text-[#0F172A] dark:text-white">Resumen de TechStore</h1>
                 <p class="mt-2 text-sm leading-6 text-[#1E293B]/75 dark:text-zinc-400">Consulta las ventas y el estado general de tu tienda.</p>
             </div>
+            <flux:button href="{{ route('pdf-downloads.index') }}" variant="primary" icon="document-text">Historial de descargas PDF</flux:button>
         </div>
 
         <div class="mb-8 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">

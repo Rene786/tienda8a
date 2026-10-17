@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\PdfDownload;
 use App\Models\Product;
 use App\Models\User;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +21,7 @@ class DashboardController extends Controller
         return view('admin.dashboard', $this->metrics());
     }
 
-    public function report(string $metric): Response
+    public function report(Request $request, string $metric): Response
     {
         $report = match ($metric) {
             'daily-sales' => $this->dailySalesReport(),
@@ -30,11 +32,27 @@ class DashboardController extends Controller
             default => abort(404),
         };
 
-        return Pdf::loadView('admin.reports.dashboard', [
+        $fileName = 'reporte-'.$metric.'-techstore.pdf';
+        $generatedAt = now();
+        $response = Pdf::loadView('admin.reports.dashboard', [
             'metric' => $metric,
             'report' => $report,
-            'generatedAt' => now(),
-        ])->download('reporte-'.$metric.'-techstore.pdf');
+            'generatedAt' => $generatedAt,
+        ])->download($fileName);
+
+        $user = $request->user();
+        abort_unless($user !== null, 401);
+
+        PdfDownload::create([
+            'user_id' => $user->getAuthIdentifier(),
+            'file_name' => $fileName,
+            'file_path' => 'reports/dashboard/'.$fileName,
+            'downloaded_at' => $generatedAt,
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        return $response;
     }
 
     /**

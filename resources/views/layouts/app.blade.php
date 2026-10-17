@@ -35,6 +35,7 @@
             @auth
                 <flux:navbar scrollable class="-my-px">
                     <flux:navbar.item href="{{ route('home') }}">Inicio</flux:navbar.item>
+                    <flux:navbar.item href="{{ route('store') }}">Catálogo</flux:navbar.item>
                     <flux:navbar.item href="{{ route('products.index') }}">Productos</flux:navbar.item>
                     <flux:navbar.item href="{{ route('product-files.index') }}">Archivos</flux:navbar.item>
                     <flux:navbar.item href="{{ route('categories.index') }}">Categorías</flux:navbar.item>
@@ -47,6 +48,7 @@
             @else
                 <flux:navbar scrollable class="-my-px">
                     <flux:navbar.item href="{{ url('/') }}">Inicio</flux:navbar.item>
+                    <flux:navbar.item href="{{ route('store') }}">Catálogo</flux:navbar.item>
                     <flux:navbar.item href="{{ route('about') }}">Acerca de nosotros</flux:navbar.item>
                     <flux:navbar.item href="{{ route('contact') }}">Contacto</flux:navbar.item>
                 </flux:navbar>

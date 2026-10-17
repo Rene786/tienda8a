@@ -2,14 +2,74 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Category;
 use App\Models\Product;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 
 class ProductController extends Controller
 {
+    public function catalog(Request $request): View
+    {
+        $filters = $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+            'category' => ['nullable', 'integer', Rule::exists('categories', 'id')->where('status', true)],
+            'sort' => ['nullable', Rule::in(['name_asc', 'name_desc', 'featured'])],
+        ]);
+
+        $products = Product::query()
+            ->with('category')
+            ->where('status', true)
+            ->whereHas('category', fn ($query) => $query->where('status', true))
+            ->when($filters['search'] ?? null, function ($query, string $search): void {
+                $query->where(function ($query) use ($search): void {
+                    $query->where('name', 'like', '%'.$search.'%')
+                        ->orWhere('description', 'like', '%'.$search.'%');
+                });
+            })
+            ->when($filters['category'] ?? null, fn ($query, int $categoryId) => $query->where('category_id', $categoryId))
+            ->when(
+                ($filters['sort'] ?? 'featured') === 'name_asc',
+                fn ($query) => $query->orderBy('name')
+            )
+            ->when(
+                ($filters['sort'] ?? 'featured') === 'name_desc',
+                fn ($query) => $query->orderByDesc('name')
+            )
+            ->when(
+                ($filters['sort'] ?? 'featured') === 'featured',
+                fn ($query) => $query->orderByDesc('featured')->orderBy('name')
+            )
+            ->paginate(12)
+            ->withQueryString();
+
+        $categories = Category::query()
+            ->where('status', true)
+            ->orderBy('name')
+            ->get();
+
+        return view('client.store', compact('products', 'categories'));
+    }
+
+    public function catalogProduct(string $slug): View
+    {
+        $product = Product::query()
+            ->with('category')
+            ->where('slug', $slug)
+            ->where('status', true)
+            ->whereHas('category', fn ($query) => $query->where('status', true))
+            ->firstOrFail();
+
+        $images = collect([$product->image, $product->image_2, $product->image_3])
+            ->filter()
+            ->values();
+
+        return view('client.product', compact('product', 'images'));
+    }
+
     public function index(): View
     {
         $products = Product::with('category')

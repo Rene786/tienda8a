@@ -7,8 +7,10 @@ use App\Models\ProductFile;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ProductFileController extends Controller
 {
@@ -40,6 +42,43 @@ class ProductFileController extends Controller
         ProductFile::create($validated);
 
         return redirect()->route('product-files.index')->with('success', 'El archivo se registró correctamente.');
+    }
+
+    public function download(Request $request, ProductFile $productFile): RedirectResponse|StreamedResponse
+    {
+        abort_unless($productFile->isPdf(), 404);
+
+        $filePath = $productFile->file_path;
+        $scheme = parse_url($filePath, PHP_URL_SCHEME);
+
+        if ($scheme !== null) {
+            abort_unless(in_array(strtolower($scheme), ['http', 'https'], true), 404);
+
+            $response = redirect()->away($filePath);
+        } else {
+            $disk = Storage::disk('public');
+            abort_unless($disk->exists($filePath), 404);
+
+            $downloadName = str_ends_with(strtolower($productFile->name), '.pdf')
+                ? $productFile->name
+                : $productFile->name.'.pdf';
+
+            $response = $disk->download($filePath, $downloadName);
+        }
+
+        $user = $request->user();
+        abort_unless($user !== null, 401);
+
+        $productFile->pdfDownloads()->create([
+            'user_id' => $user->getAuthIdentifier(),
+            'file_name' => $productFile->name,
+            'file_path' => $filePath,
+            'downloaded_at' => now(),
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
+
+        return $response;
     }
 
     public function edit(ProductFile $productFile): View
