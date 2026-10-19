@@ -113,7 +113,7 @@
                 }
             },
             startFeaturedAutoplay() {
-                if (this.autoplayTimer || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                if (this.autoplayTimer) {
                     return;
                 }
 
