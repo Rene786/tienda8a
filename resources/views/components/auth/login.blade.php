@@ -36,6 +36,12 @@ new class extends Component
             <p class="mt-2 text-sm text-zinc-600 dark:text-zinc-400">Accede para continuar.</p>
         </div>
 
+        @if (session('status'))
+            <p role="status" class="mb-5 text-sm text-green-700 dark:text-green-400">
+                Tu contraseña se actualizó. Ya puedes iniciar sesión.
+            </p>
+        @endif
+
         <form wire:submit="login" class="space-y-5">
             <div>
                 <flux:input id="email" type="email" wire:model="email" label="Correo electrónico" required autofocus autocomplete="email" />
@@ -43,6 +49,10 @@ new class extends Component
 
             <div>
                 <flux:input id="password" type="password" wire:model="password" label="Contraseña" required autocomplete="current-password" />
+            </div>
+
+            <div class="text-right text-sm">
+                <flux:link href="{{ route('password.request') }}">¿Olvidaste tu contraseña?</flux:link>
             </div>
 
             <flux:checkbox wire:model="remember" label="Recordarme" />
