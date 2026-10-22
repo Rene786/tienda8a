@@ -5,7 +5,7 @@
                 <flux:badge color="blue" class="mb-5">Contacto</flux:badge>
                 <h1 class="text-4xl font-semibold tracking-tight sm:text-5xl">¿Cómo podemos ayudarte?</h1>
                 <p class="mx-auto mt-5 max-w-2xl text-base leading-7 text-zinc-300 sm:text-lg">
-                    Queremos que encuentres lo que necesitas. Cuéntanos tu duda y pronto podrás comunicarte directamente desde aquí.
+                    Queremos que encuentres lo que necesitas. Cuéntanos tu duda y nos pondremos en contacto contigo.
                 </p>
             </div>
         </flux:card>
@@ -22,28 +22,40 @@
                     </div>
                 </div>
 
-                <form class="mt-7 space-y-5">
+                @if (session('success'))
+                    <flux:callout variant="success" icon="check-circle" class="mt-6">{{ session('success') }}</flux:callout>
+                @endif
+                @if (session('error'))
+                    <flux:callout variant="danger" icon="exclamation-circle" class="mt-6">{{ session('error') }}</flux:callout>
+                @endif
+
+                <form action="{{ route('contact.send') }}" method="POST" class="mt-7 space-y-5">
+                    @csrf
                     <div class="grid gap-5 sm:grid-cols-2">
                         <flux:field>
                             <flux:label for="name">Nombre</flux:label>
-                            <flux:input id="name" name="name" autocomplete="name" placeholder="Tu nombre" disabled />
+                            <flux:input id="name" name="name" autocomplete="name" placeholder="Tu nombre" value="{{ old('name') }}" required maxlength="100" />
+                            <flux:error name="name" />
                         </flux:field>
                         <flux:field>
                             <flux:label for="email">Correo electrónico</flux:label>
-                            <flux:input id="email" name="email" type="email" autocomplete="email" placeholder="tu@correo.com" disabled />
+                            <flux:input id="email" name="email" type="email" autocomplete="email" placeholder="tu@correo.com" value="{{ old('email') }}" required maxlength="255" />
+                            <flux:error name="email" />
                         </flux:field>
                     </div>
                     <flux:field>
                         <flux:label for="subject">Asunto</flux:label>
-                        <flux:input id="subject" name="subject" placeholder="¿Sobre qué necesitas ayuda?" disabled />
+                        <flux:input id="subject" name="subject" placeholder="¿Sobre qué necesitas ayuda?" value="{{ old('subject') }}" required maxlength="150" />
+                        <flux:error name="subject" />
                     </flux:field>
                     <flux:field>
                         <flux:label for="message">Mensaje</flux:label>
-                        <flux:textarea id="message" name="message" rows="5" placeholder="Escribe aquí tu mensaje..." disabled />
+                        <flux:textarea id="message" name="message" rows="5" placeholder="Escribe aquí tu mensaje..." required maxlength="5000">{{ old('message') }}</flux:textarea>
+                        <flux:error name="message" />
                     </flux:field>
                     <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-                        <p class="text-sm text-zinc-600 dark:text-zinc-400">El envío de mensajes estará disponible próximamente.</p>
-                        <flux:button type="button" variant="primary" disabled>Enviar mensaje</flux:button>
+                        <p class="text-sm text-zinc-600 dark:text-zinc-400">Te responderemos al correo que indiques.</p>
+                        <flux:button type="submit" variant="primary" class="techstore-primary-button">Enviar mensaje</flux:button>
                     </div>
                 </form>
             </flux:card>

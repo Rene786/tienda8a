@@ -15,14 +15,43 @@ class OrderController extends Controller
 
     private const PAYMENT_STATUSES = ['pending', 'paid', 'failed', 'refunded'];
 
-    public function index(): View
+    public function index(Request $request): View
     {
-        $orders = Order::with(['user' => fn ($query) => $query->withTrashed()])
-            ->withCount('items')
-            ->latest()
-            ->paginate(10);
+        $filters = $request->validate([
+            'status' => ['nullable', Rule::in(['all', ...self::ORDER_STATUSES, 'deleted'])],
+        ]);
 
-        return view('admin.orders.index', compact('orders'));
+        $orders = Order::withTrashed()
+            ->with(['user' => fn ($query) => $query->withTrashed()])
+            ->withCount('items')
+            ->when($filters['status'] ?? 'all', function ($query, string $status): void {
+                if ($status === 'deleted') {
+                    $query->onlyTrashed();
+
+                    return;
+                }
+
+                $query->withoutTrashed();
+
+                if (in_array($status, self::ORDER_STATUSES, true)) {
+                    $query->where('status', $status);
+                }
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        $statusOptions = [
+            'all' => 'Todos (sin eliminar)',
+            'pending' => 'Pendientes',
+            'processing' => 'En proceso',
+            'shipped' => 'Enviados',
+            'delivered' => 'Entregados',
+            'cancelled' => 'Cancelados',
+            'deleted' => 'Eliminados',
+        ];
+
+        return view('admin.orders.index', compact('orders', 'statusOptions'));
     }
 
     public function create(): View

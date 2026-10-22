@@ -30,8 +30,8 @@
                             </div>
                         @endif
                     @else
-                        <div class="flex aspect-[4/3] items-center justify-center rounded-xl bg-[#0F172A]/[0.03] text-[#0F172A]/20 dark:bg-white/5 dark:text-white/20">
-                            <flux:icon name="photo" variant="outline" class="size-16" />
+                        <div class="aspect-[4/3] overflow-hidden rounded-xl bg-[#0F172A]/[0.03] dark:bg-white/5">
+                            <img src="{{ asset('images/product-placeholder.svg') }}" alt="{{ $product->name }}" class="size-full object-cover">
                         </div>
                     @endif
                 </flux:card>

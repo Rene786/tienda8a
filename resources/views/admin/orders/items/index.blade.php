@@ -11,6 +11,7 @@
         @if (session('success'))
             <flux:callout variant="success" class="mb-4">{{ session('success') }}</flux:callout>
         @endif
+        <x-admin.status-filter route-name="order-items.index" :options="$statusOptions" />
         <flux:table>
             <flux:table.columns>
                 <flux:table.column>Pedido</flux:table.column>
@@ -26,6 +27,7 @@
                         <flux:table.cell variant="strong">
                             {{ $orderItem->order?->order_number ?? 'Pedido no disponible' }}
                             @if ($orderItem->order?->trashed())<span class="block text-xs text-amber-700">Pedido eliminado</span>@endif
+                            @if ($orderItem->trashed())<span class="block text-xs text-red-700">Artículo eliminado</span>@endif
                         </flux:table.cell>
                         <flux:table.cell>
                             {{ $orderItem->product_name }}
@@ -35,14 +37,16 @@
                         <flux:table.cell>{{ $orderItem->quantity }}</flux:table.cell>
                         <flux:table.cell variant="strong">${{ number_format((float) $orderItem->subtotal, 2) }}</flux:table.cell>
                         <flux:table.cell>
-                            <div class="flex items-center gap-2">
-                                <flux:button href="{{ route('order-items.edit', $orderItem) }}" size="sm" variant="ghost">Editar</flux:button>
-                                <form action="{{ route('order-items.destroy', $orderItem) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este artículo?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <flux:button type="submit" size="sm" variant="danger">Eliminar</flux:button>
-                                </form>
-                            </div>
+                            @unless ($orderItem->trashed())
+                                <div class="flex items-center gap-2">
+                                    <flux:button href="{{ route('order-items.edit', $orderItem) }}" size="sm" variant="ghost">Editar</flux:button>
+                                    <form action="{{ route('order-items.destroy', $orderItem) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este artículo?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <flux:button type="submit" size="sm" variant="danger">Eliminar</flux:button>
+                                    </form>
+                                </div>
+                            @endunless
                         </flux:table.cell>
                     </flux:table.row>
                 @empty

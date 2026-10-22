@@ -11,6 +11,7 @@
         @if (session('success'))
             <flux:callout variant="success" class="mb-4">{{ session('success') }}</flux:callout>
         @endif
+        <x-admin.status-filter route-name="product-files.index" :options="$statusOptions" />
         <flux:table>
             <flux:table.columns>
                 <flux:table.column>Nombre</flux:table.column>
@@ -22,24 +23,31 @@
             <flux:table.rows>
                 @forelse ($productFiles as $productFile)
                     <flux:table.row>
-                        <flux:table.cell variant="strong">{{ $productFile->name }}</flux:table.cell>
+                        <flux:table.cell variant="strong">
+                            {{ $productFile->name }}
+                            @if ($productFile->trashed())<span class="mt-1 block"><flux:badge color="red">Eliminado</flux:badge></span>@endif
+                        </flux:table.cell>
                         <flux:table.cell>
                             {{ $productFile->product?->name ?? 'Producto no disponible' }}
                             @if ($productFile->product?->trashed())<span class="block text-xs text-amber-700">Producto eliminado</span>@endif
                         </flux:table.cell>
                         <flux:table.cell>{{ $productFile->file_type ?: '—' }}</flux:table.cell>
                         <flux:table.cell>
-                            <flux:button href="{{ $productFile->isPdf() ? route('product-files.download', $productFile) : (str_starts_with($productFile->file_path, 'http') ? $productFile->file_path : asset('storage/'.$productFile->file_path)) }}" target="_blank" rel="noopener noreferrer" size="sm" variant="ghost">Ver archivo</flux:button>
+                            @unless ($productFile->trashed())
+                                <flux:button href="{{ $productFile->isPdf() ? route('product-files.download', $productFile) : (str_starts_with($productFile->file_path, 'http') ? $productFile->file_path : asset('storage/'.$productFile->file_path)) }}" target="_blank" rel="noopener noreferrer" size="sm" variant="ghost">Ver archivo</flux:button>
+                            @endunless
                         </flux:table.cell>
                         <flux:table.cell>
-                            <div class="flex items-center gap-2">
-                                <flux:button href="{{ route('product-files.edit', $productFile) }}" size="sm" variant="ghost">Editar</flux:button>
-                                <form action="{{ route('product-files.destroy', $productFile) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este archivo?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <flux:button type="submit" size="sm" variant="danger">Eliminar</flux:button>
-                                </form>
-                            </div>
+                            @unless ($productFile->trashed())
+                                <div class="flex items-center gap-2">
+                                    <flux:button href="{{ route('product-files.edit', $productFile) }}" size="sm" variant="ghost">Editar</flux:button>
+                                    <form action="{{ route('product-files.destroy', $productFile) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este archivo?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <flux:button type="submit" size="sm" variant="danger">Eliminar</flux:button>
+                                    </form>
+                                </div>
+                            @endunless
                         </flux:table.cell>
                     </flux:table.row>
                 @empty

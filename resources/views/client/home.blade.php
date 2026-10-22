@@ -30,7 +30,7 @@
                     @php($heroProduct = $featuredProducts->first())
                     <a href="{{ route('store.show', $heroProduct->slug) }}" class="group relative block overflow-hidden rounded-2xl border border-white/15 bg-[#0F172A]/40 p-3 shadow-2xl backdrop-blur-sm transition hover:border-white/30 sm:p-4">
                         <div class="relative aspect-[4/3] overflow-hidden rounded-xl bg-[#0F172A]/30">
-                            <img src="{{ asset('storage/images/'.$heroProduct->image) }}" alt="{{ $heroProduct->name }}" fetchpriority="high" class="size-full object-cover transition duration-500 group-hover:scale-105">
+                            <img src="{{ $heroProduct->image ? asset('storage/images/'.$heroProduct->image) : asset('images/product-placeholder.svg') }}" alt="{{ $heroProduct->name }}" fetchpriority="high" class="size-full object-cover transition duration-500 group-hover:scale-105">
                             <div class="absolute inset-0 bg-gradient-to-t from-[#0F172A]/80 via-transparent to-transparent"></div>
                             <div class="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-4 sm:p-6">
                                 <div class="min-w-0">
@@ -147,7 +147,7 @@
                     <a href="{{ route('store.show', $product->slug) }}" data-featured-card class="group w-[92%] shrink-0 snap-start sm:w-[68%] xl:w-[38%]">
                         <flux:card class="h-full overflow-hidden p-0 transition duration-200 group-hover:-translate-y-1 group-hover:shadow-lg">
                             <div class="relative aspect-[4/3] overflow-hidden bg-[#0F172A]/[0.03] dark:bg-white/5">
-                                <img src="{{ asset('storage/images/'.$product->image) }}" alt="{{ $product->name }}" loading="lazy" decoding="async" class="size-full object-cover transition duration-300 group-hover:scale-105">
+                                <img src="{{ $product->image ? asset('storage/images/'.$product->image) : asset('images/product-placeholder.svg') }}" alt="{{ $product->name }}" loading="lazy" decoding="async" class="size-full object-cover transition duration-300 group-hover:scale-105">
                                 <div class="absolute left-3 top-3">
                                     <flux:badge color="blue" icon="sparkles">Destacado</flux:badge>
                                 </div>

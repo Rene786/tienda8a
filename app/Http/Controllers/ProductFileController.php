@@ -14,13 +14,23 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ProductFileController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $productFiles = ProductFile::with(['product' => fn ($query) => $query->withTrashed()])
-            ->latest()
-            ->paginate(10);
+        $filters = $request->validate([
+            'status' => ['nullable', Rule::in(['all', 'deleted'])],
+        ]);
 
-        return view('admin.products.files.index', compact('productFiles'));
+        $productFiles = ProductFile::withTrashed()
+            ->with(['product' => fn ($query) => $query->withTrashed()])
+            ->when(($filters['status'] ?? 'all') === 'deleted', fn ($query) => $query->onlyTrashed())
+            ->when(($filters['status'] ?? 'all') === 'all', fn ($query) => $query->withoutTrashed())
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        $statusOptions = ['all' => 'Vigentes', 'deleted' => 'Eliminados'];
+
+        return view('admin.products.files.index', compact('productFiles', 'statusOptions'));
     }
 
     public function create(): View

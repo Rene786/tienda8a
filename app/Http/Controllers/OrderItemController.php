@@ -14,16 +14,26 @@ use Illuminate\View\View;
 
 class OrderItemController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $orderItems = OrderItem::with([
-            'order' => fn ($query) => $query->withTrashed(),
-            'product' => fn ($query) => $query->withTrashed(),
-        ])
-            ->latest()
-            ->paginate(10);
+        $filters = $request->validate([
+            'status' => ['nullable', Rule::in(['all', 'deleted'])],
+        ]);
 
-        return view('admin.orders.items.index', compact('orderItems'));
+        $orderItems = OrderItem::withTrashed()
+            ->with([
+                'order' => fn ($query) => $query->withTrashed(),
+                'product' => fn ($query) => $query->withTrashed(),
+            ])
+            ->when(($filters['status'] ?? 'all') === 'deleted', fn ($query) => $query->onlyTrashed())
+            ->when(($filters['status'] ?? 'all') === 'all', fn ($query) => $query->withoutTrashed())
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        $statusOptions = ['all' => 'Vigentes', 'deleted' => 'Eliminados'];
+
+        return view('admin.orders.items.index', compact('orderItems', 'statusOptions'));
     }
 
     public function create(): View

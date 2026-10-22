@@ -70,13 +70,65 @@ class ProductController extends Controller
         return view('client.product', compact('product', 'images'));
     }
 
-    public function index(): View
+    public function index(Request $request): View
     {
-        $products = Product::with('category')
-            ->latest()
-            ->paginate(10);
+        $filters = $request->validate([
+            'search' => ['nullable', 'string', 'max:100'],
+            'category' => ['nullable', 'integer', Rule::exists('categories', 'id')],
+            'sort' => ['nullable', Rule::in(['name_asc', 'name_desc', 'featured'])],
+            'status' => ['nullable', Rule::in(['all', 'active', 'inactive', 'deleted'])],
+        ]);
 
-        return view('admin.products.index', compact('products'));
+        $products = Product::query()
+            ->withTrashed()
+            ->with('category')
+            ->when($filters['status'] ?? 'all', function ($query, string $status): void {
+                if ($status === 'deleted') {
+                    $query->onlyTrashed();
+
+                    return;
+                }
+
+                $query->withoutTrashed();
+
+                if (in_array($status, ['active', 'inactive'], true)) {
+                    $query->where('status', $status === 'active');
+                }
+            })
+            ->when($filters['search'] ?? null, function ($query, string $search): void {
+                $query->where(function ($query) use ($search): void {
+                    $query->where('name', 'like', '%'.$search.'%')
+                        ->orWhere('description', 'like', '%'.$search.'%');
+                });
+            })
+            ->when($filters['category'] ?? null, fn ($query, int $categoryId) => $query->where('category_id', $categoryId))
+            ->when(
+                ($filters['sort'] ?? 'featured') === 'name_asc',
+                fn ($query) => $query->orderBy('name')
+            )
+            ->when(
+                ($filters['sort'] ?? 'featured') === 'name_desc',
+                fn ($query) => $query->orderByDesc('name')
+            )
+            ->when(
+                ($filters['sort'] ?? 'featured') === 'featured',
+                fn ($query) => $query->orderByDesc('featured')->orderBy('name')
+            )
+            ->paginate(12)
+            ->withQueryString();
+
+        $categories = Category::query()
+            ->orderBy('name')
+            ->get();
+
+        $statusOptions = [
+            'all' => 'Todos (sin eliminar)',
+            'active' => 'Activos',
+            'inactive' => 'Inactivos',
+            'deleted' => 'Eliminados',
+        ];
+
+        return view('admin.products.index', compact('products', 'categories', 'statusOptions'));
     }
 
     public function create(): View

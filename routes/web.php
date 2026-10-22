@@ -4,6 +4,7 @@
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderItemController;
@@ -20,17 +21,19 @@ Route::get('/', function () {
         ->with('category')
         ->where('featured', true)
         ->where('status', true)
-        ->whereNotNull('image')
-        ->where('image', '!=', '')
         ->whereHas('category', fn ($query) => $query->where('status', true))
         ->orderBy('name')
         ->get();
 
     return view('client.home', compact('featuredProducts'));
 });
+
 Route::get('/contact', function () {
     return view('client.contact');
 })->name('contact');
+Route::post('/contact', [ContactController::class, 'send'])
+    ->middleware('throttle:5,1')
+    ->name('contact.send');
 Route::get('/about', function () {
     return view('client.aboutUs');
 })->name('about');
@@ -40,7 +43,6 @@ Route::get('/store/{slug}', [ProductController::class, 'catalogProduct'])->name(
 
 // Rutas para autenticación
 Route::livewire('/login', 'auth.login')->name('login');
-
 Route::livewire('/register', 'auth.register')->name('register');
 
 // rutas para el dashboard y reportes

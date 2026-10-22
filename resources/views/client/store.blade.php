@@ -76,9 +76,7 @@
                                 @if ($product->image)
                                     <img src="{{ asset('storage/images/'.$product->image) }}" alt="{{ $product->name }}" loading="lazy" decoding="async" class="size-full object-cover transition duration-300 group-hover:scale-105">
                                 @else
-                                    <div class="flex size-full items-center justify-center text-[#0F172A]/20 dark:text-white/20">
-                                        <flux:icon name="photo" variant="outline" class="size-12" />
-                                    </div>
+                                    <img src="{{ asset('images/product-placeholder.svg') }}" alt="{{ $product->name }}" loading="lazy" decoding="async" class="size-full object-cover transition duration-300 group-hover:scale-105">
                                 @endif
                                 @if ($product->featured)
                                     <div class="absolute left-3 top-3">

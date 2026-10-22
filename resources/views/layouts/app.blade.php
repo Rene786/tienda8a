@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#0F172A">
 
     <title>{{ $title ?? 'TechStore' }}</title>
-    
+
     @fonts
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @fluxAppearance
@@ -37,7 +37,7 @@
                     <flux:navbar.item href="{{ route('home') }}">Inicio</flux:navbar.item>
                     <flux:navbar.item href="{{ route('store') }}">Catálogo</flux:navbar.item>
                     <flux:navbar.item href="{{ route('products.index') }}">Productos</flux:navbar.item>
-                    <flux:navbar.item href="{{ route('product-files.index') }}">Archivos</flux:navbar.item>
+                    {{-- <flux:navbar.item href="{{ route('product-files.index') }}">Archivos</flux:navbar.item> --}}
                     <flux:navbar.item href="{{ route('categories.index') }}">Categorías</flux:navbar.item>
                     <flux:navbar.item href="{{ route('carts.index') }}">Carritos</flux:navbar.item>
                     <flux:navbar.item href="{{ route('cart-items.index') }}">Artículos</flux:navbar.item>

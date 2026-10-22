@@ -11,6 +11,7 @@
         @if (session('success'))
             <flux:callout variant="success" class="mb-4">{{ session('success') }}</flux:callout>
         @endif
+        <x-admin.status-filter route-name="cart-items.index" :options="$statusOptions" />
         <flux:table>
             <flux:table.columns>
                 <flux:table.column>Carrito / usuario</flux:table.column>
@@ -26,6 +27,7 @@
                             Carrito #{{ $cartItem->cart_id }}
                             <span class="block text-xs font-normal text-zinc-500">{{ $cartItem->cart?->user?->name ?? 'Usuario no disponible' }}</span>
                             @if ($cartItem->cart?->trashed())<span class="block text-xs text-amber-700">Carrito eliminado</span>@endif
+                            @if ($cartItem->trashed())<span class="block text-xs text-red-700">Artículo eliminado</span>@endif
                         </flux:table.cell>
                         <flux:table.cell>
                             {{ $cartItem->product?->name ?? 'Producto no disponible' }}
@@ -34,14 +36,16 @@
                         <flux:table.cell><flux:badge color="blue">{{ $cartItem->quantity }}</flux:badge></flux:table.cell>
                         <flux:table.cell>{{ $cartItem->created_at?->format('d/m/Y') }}</flux:table.cell>
                         <flux:table.cell>
-                            <div class="flex items-center gap-2">
-                                <flux:button href="{{ route('cart-items.edit', $cartItem) }}" size="sm" variant="ghost">Editar</flux:button>
-                                <form action="{{ route('cart-items.destroy', $cartItem) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este artículo?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <flux:button type="submit" size="sm" variant="danger">Eliminar</flux:button>
-                                </form>
-                            </div>
+                            @unless ($cartItem->trashed())
+                                <div class="flex items-center gap-2">
+                                    <flux:button href="{{ route('cart-items.edit', $cartItem) }}" size="sm" variant="ghost">Editar</flux:button>
+                                    <form action="{{ route('cart-items.destroy', $cartItem) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este artículo?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <flux:button type="submit" size="sm" variant="danger">Eliminar</flux:button>
+                                    </form>
+                                </div>
+                            @endunless
                         </flux:table.cell>
                     </flux:table.row>
                 @empty

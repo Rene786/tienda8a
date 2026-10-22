@@ -14,6 +14,7 @@
         @if (session('error'))
             <flux:callout variant="danger" class="mb-4">{{ session('error') }}</flux:callout>
         @endif
+        <x-admin.status-filter route-name="users.index" :options="$statusOptions" />
         <flux:table>
             <flux:table.columns>
                 <flux:table.column>Nombre</flux:table.column>
@@ -29,17 +30,22 @@
                         <flux:table.cell>{{ $user->email }}</flux:table.cell>
                         <flux:table.cell>
                             <flux:badge :color="$user->role === 'admin' ? 'blue' : 'green'">{{ $user->role === 'admin' ? 'Administrador' : 'Cliente' }}</flux:badge>
+                            @if ($user->trashed())
+                                <span class="mt-1 block"><flux:badge color="red">Eliminado</flux:badge></span>
+                            @endif
                         </flux:table.cell>
                         <flux:table.cell>{{ $user->created_at?->format('d/m/Y') }}</flux:table.cell>
                         <flux:table.cell>
-                            <div class="flex items-center gap-2">
-                                <flux:button href="{{ route('users.edit', $user->id) }}" size="sm" variant="ghost">Editar</flux:button>
-                                <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este usuario?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <flux:button type="submit" size="sm" variant="danger">Eliminar</flux:button>
-                                </form>
-                            </div>
+                            @unless ($user->trashed())
+                                <div class="flex items-center gap-2">
+                                    <flux:button href="{{ route('users.edit', $user->id) }}" size="sm" variant="ghost">Editar</flux:button>
+                                    <form action="{{ route('users.destroy', $user->id) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este usuario?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <flux:button type="submit" size="sm" variant="danger">Eliminar</flux:button>
+                                    </form>
+                                </div>
+                            @endunless
                         </flux:table.cell>
                     </flux:table.row>
                 @empty

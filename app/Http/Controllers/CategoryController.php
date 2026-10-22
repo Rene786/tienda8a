@@ -10,11 +10,39 @@ use Illuminate\View\View;
 
 class CategoryController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $categories = Category::withCount('products')->latest()->paginate(10);
+        $filters = $request->validate([
+            'status' => ['nullable', Rule::in(['all', 'active', 'inactive', 'deleted'])],
+        ]);
 
-        return view('admin.categories.index', compact('categories'));
+        $categories = Category::withTrashed()
+            ->withCount('products')
+            ->when($filters['status'] ?? 'all', function ($query, string $status): void {
+                if ($status === 'deleted') {
+                    $query->onlyTrashed();
+
+                    return;
+                }
+
+                $query->withoutTrashed();
+
+                if (in_array($status, ['active', 'inactive'], true)) {
+                    $query->where('status', $status === 'active');
+                }
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        $statusOptions = [
+            'all' => 'Todas (sin eliminar)',
+            'active' => 'Activas',
+            'inactive' => 'Inactivas',
+            'deleted' => 'Eliminadas',
+        ];
+
+        return view('admin.categories.index', compact('categories', 'statusOptions'));
     }
 
     public function create(): View

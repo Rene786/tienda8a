@@ -10,11 +10,32 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $users = User::latest()->paginate(10);
+        $filters = $request->validate([
+            'status' => ['nullable', Rule::in(['all', 'deleted'])],
+        ]);
 
-        return view('admin.users.index', compact('users'));
+        $users = User::withTrashed()
+            ->when($filters['status'] ?? 'all', function ($query, string $status): void {
+                if ($status === 'deleted') {
+                    $query->onlyTrashed();
+
+                    return;
+                }
+
+                $query->withoutTrashed();
+            })
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        $statusOptions = [
+            'all' => 'Todos (sin eliminar)',
+            'deleted' => 'Eliminados',
+        ];
+
+        return view('admin.users.index', compact('users', 'statusOptions'));
     }
 
     public function create(): View

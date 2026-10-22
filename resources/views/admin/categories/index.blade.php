@@ -11,6 +11,7 @@
         @if (session('success'))
             <flux:callout variant="success" class="mb-4">{{ session('success') }}</flux:callout>
         @endif
+        <x-admin.status-filter route-name="categories.index" :options="$statusOptions" />
         <flux:table>
             <flux:table.columns>
                 <flux:table.column>Categoría</flux:table.column>
@@ -26,17 +27,23 @@
                         <flux:table.cell>{{ $category->description ?: '—' }}</flux:table.cell>
                         <flux:table.cell>{{ $category->products_count }}</flux:table.cell>
                         <flux:table.cell>
-                            <flux:badge :color="$category->status ? 'green' : 'zinc'">{{ $category->status ? 'Activa' : 'Inactiva' }}</flux:badge>
+                            @if ($category->trashed())
+                                <flux:badge color="red">Eliminada</flux:badge>
+                            @else
+                                <flux:badge :color="$category->status ? 'green' : 'zinc'">{{ $category->status ? 'Activa' : 'Inactiva' }}</flux:badge>
+                            @endif
                         </flux:table.cell>
                         <flux:table.cell>
-                            <div class="flex items-center gap-2">
-                                <flux:button href="{{ route('categories.edit', $category->id) }}" size="sm" variant="ghost">Editar</flux:button>
-                                <form action="{{ route('categories.destroy', $category->id) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar esta categoría?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <flux:button type="submit" size="sm" variant="danger">Eliminar</flux:button>
-                                </form>
-                            </div>
+                            @unless ($category->trashed())
+                                <div class="flex items-center gap-2">
+                                    <flux:button href="{{ route('categories.edit', $category->id) }}" size="sm" variant="ghost">Editar</flux:button>
+                                    <form action="{{ route('categories.destroy', $category->id) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar esta categoría?')">
+                                        @csrf
+                                        @method('DELETE')
+                                        <flux:button type="submit" size="sm" variant="danger">Eliminar</flux:button>
+                                    </form>
+                                </div>
+                            @endunless
                         </flux:table.cell>
                     </flux:table.row>
                 @empty

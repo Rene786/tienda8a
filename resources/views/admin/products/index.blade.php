@@ -13,13 +13,57 @@
             <flux:callout variant="success" icon="check-circle" class="mb-6">{{ session('success') }}</flux:callout>
         @endif
 
+        <flux:card class="mb-6 border-[#E2E8F0] bg-white shadow-sm dark:border-[#27364D] dark:bg-[#111C31]">
+            <form action="{{ route('products.index') }}" method="GET" class="grid gap-4 sm:grid-cols-2 sm:items-end xl:grid-cols-[minmax(0,1fr)_minmax(0,14rem)_minmax(0,12rem)_minmax(0,12rem)_auto_auto]">
+                <flux:field>
+                    <flux:label for="search">Buscar productos</flux:label>
+                    <flux:input id="search" name="search" type="search" value="{{ request('search') }}" placeholder="Nombre o descripción" />
+                </flux:field>
+
+                <flux:field>
+                    <flux:label for="category">Categoría</flux:label>
+                    <flux:select id="category" name="category">
+                        <option value="">Todas las categorías</option>
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}" @selected((string) request('category') === (string) $category->id)>
+                                {{ $category->name }}{{ $category->status ? '' : ' (Inactiva)' }}
+                            </option>
+                        @endforeach
+                    </flux:select>
+                </flux:field>
+
+                <flux:field>
+                    <flux:label for="sort">Ordenar por</flux:label>
+                    <flux:select id="sort" name="sort">
+                        <option value="featured" @selected(request('sort', 'featured') === 'featured')>Destacados</option>
+                        <option value="name_asc" @selected(request('sort') === 'name_asc')>Nombre: A–Z</option>
+                        <option value="name_desc" @selected(request('sort') === 'name_desc')>Nombre: Z–A</option>
+                    </flux:select>
+                </flux:field>
+
+                <flux:field>
+                    <flux:label for="status">Estado</flux:label>
+                    <flux:select id="status" name="status">
+                        @foreach ($statusOptions as $value => $label)
+                            <option value="{{ $value }}" @selected(request('status', 'all') === $value)>{{ $label }}</option>
+                        @endforeach
+                    </flux:select>
+                </flux:field>
+
+                <flux:button type="submit" variant="primary" icon="magnifying-glass" class="techstore-primary-button">Filtrar</flux:button>
+                @if (request()->filled('search') || request()->filled('category') || request()->filled('sort') || request('status', 'all') !== 'all')
+                    <flux:button href="{{ route('products.index') }}" variant="ghost">Limpiar</flux:button>
+                @endif
+            </form>
+        </flux:card>
+
         <div class="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <flux:card class="border-[#E2E8F0] border-t-2 border-t-[#0F172A] bg-white shadow-sm dark:border-[#27364D] dark:bg-[#111C31]">
                 <div class="flex items-start justify-between gap-3">
                     <div>
-                        <flux:text class="text-sm text-[#1E293B]/70 dark:text-zinc-400">Productos registrados</flux:text>
+                        <flux:text class="text-sm text-[#1E293B]/70 dark:text-zinc-400">Productos encontrados</flux:text>
                         <flux:heading size="xl" class="mt-2 text-[#0F172A] dark:text-white">{{ number_format($products->total()) }}</flux:heading>
-                        <flux:text class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">En todo el catálogo</flux:text>
+                        <flux:text class="mt-1 text-xs text-zinc-500 dark:text-zinc-400">Con los filtros actuales</flux:text>
                     </div>
                     <span class="flex size-10 items-center justify-center rounded-xl bg-[#0F172A]/5 text-[#0F172A] dark:bg-white/10 dark:text-white">
                         <flux:icon name="squares-2x2" variant="outline" class="size-5" />
@@ -69,7 +113,6 @@
                 <flux:heading size="lg">Inventario</flux:heading>
                 <flux:text class="mt-1 text-sm text-zinc-500 dark:text-zinc-400">Mostrando {{ $products->firstItem() ?? 0 }}–{{ $products->lastItem() ?? 0 }} de {{ number_format($products->total()) }} productos</flux:text>
             </div>
-            <flux:badge color="blue" icon="clock">Más recientes</flux:badge>
         </div>
 
         @if ($products->isEmpty())
@@ -84,59 +127,55 @@
                 </div>
             </flux:card>
         @else
-            <div class="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+            <div class="space-y-3">
                 @foreach ($products as $product)
-                    <flux:card class="group overflow-hidden border-[#E2E8F0] bg-white p-0 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-[#2563EB]/40 hover:shadow-lg dark:border-[#27364D] dark:bg-[#111C31]">
-                        <div class="relative aspect-[16/10] overflow-hidden bg-[#0F172A]/[0.03]">
-                            @if ($product->image)
-                                <img src="{{ asset('storage/images/'.$product->image) }}" alt="{{ $product->name }}" loading="lazy" decoding="async" class="size-full object-cover transition duration-300 group-hover:scale-105">
-                            @else
-                                <div class="flex size-full items-center justify-center text-[#0F172A]/20">
-                                    <flux:icon name="photo" variant="outline" class="size-12" />
-                                </div>
-                            @endif
-                            <div class="absolute left-3 top-3 flex flex-wrap gap-2">
-                                @if ($product->featured)
-                                    <flux:badge color="blue" icon="sparkles">Destacado</flux:badge>
+                    <flux:card class="group border-[#E2E8F0] bg-white p-3 shadow-sm transition duration-200 hover:border-[#2563EB]/40 hover:shadow-md dark:border-[#27364D] dark:bg-[#111C31] sm:p-4">
+                        <div class="flex items-center gap-3 sm:gap-4">
+                            <div class="relative size-16 shrink-0 overflow-hidden rounded-lg bg-[#0F172A]/[0.03] sm:size-20">
+                                @if ($product->image)
+                                    <img src="{{ asset('storage/images/'.$product->image) }}" alt="{{ $product->name }}" loading="lazy" decoding="async" class="size-full object-cover">
+                                @else
+                                    <img src="{{ asset('images/product-placeholder.svg') }}" alt="{{ $product->name }}" loading="lazy" decoding="async" class="size-full object-cover">
                                 @endif
-                                <flux:badge :color="$product->status ? 'green' : 'zinc'" :icon="$product->status ? 'check-circle' : 'minus-circle'">
-                                    {{ $product->status ? 'Activo' : 'Inactivo' }}
-                                </flux:badge>
                             </div>
-                        </div>
 
-                        <div class="space-y-4 p-5">
-                            <div class="flex items-start justify-between gap-3">
-                                <div class="min-w-0">
+                            <div class="min-w-0 flex-1 space-y-1">
+                                <div class="flex flex-wrap items-center gap-2">
                                     <flux:badge color="blue" size="sm">{{ $product->category?->name ?? 'Sin categoría' }}</flux:badge>
-                                    <flux:heading size="lg" class="mt-2 truncate text-[#0F172A] dark:text-white">{{ $product->name }}</flux:heading>
-                                    <flux:text class="mt-1 truncate text-xs text-zinc-500 dark:text-zinc-400">/{{ $product->slug }}</flux:text>
+                                    @if ($product->trashed())
+                                        <flux:badge color="red">Eliminado</flux:badge>
+                                    @else
+                                        <flux:badge :color="$product->status ? 'green' : 'zinc'" :icon="$product->status ? 'check-circle' : 'minus-circle'">
+                                            {{ $product->status ? 'Activo' : 'Inactivo' }}
+                                        </flux:badge>
+                                        @if ($product->featured)
+                                            <flux:badge color="blue" icon="sparkles">Destacado</flux:badge>
+                                        @endif
+                                    @endif
                                 </div>
-                                <span class="shrink-0 text-lg font-semibold text-[#16A34A]">${{ number_format((float) $product->price, 2) }}</span>
+                                <flux:heading size="lg" class="truncate text-[#0F172A] dark:text-white">{{ $product->name }}</flux:heading>
+                                <flux:text class="truncate text-xs text-zinc-500 dark:text-zinc-400">/{{ $product->slug }}</flux:text>
+                                @if ($product->description)
+                                    <p class="line-clamp-1 text-sm text-zinc-600 dark:text-zinc-400">{{ $product->description }}</p>
+                                @endif
                             </div>
 
-                            @if ($product->description)
-                                <p class="line-clamp-2 min-h-10 text-sm leading-5 text-zinc-600 dark:text-zinc-400">{{ $product->description }}</p>
-                            @else
-                                <p class="min-h-10 text-sm text-zinc-400">Sin descripción.</p>
-                            @endif
-
-                            <div class="flex items-center justify-between border-t border-[#E2E8F0] pt-4">
+                            <div class="flex flex-col items-end gap-2 border-l border-[#E2E8F0] pl-3 dark:border-[#27364D] sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4 sm:pl-4">
                                 <div class="flex items-center gap-2">
+                                    <span class="text-lg font-semibold text-[#16A34A]">${{ number_format((float) $product->price, 2) }}</span>
                                     <flux:badge :color="$product->stock > 5 ? 'green' : ($product->stock > 0 ? 'amber' : 'red')">
                                         {{ number_format($product->stock) }}
                                     </flux:badge>
-                                    <span class="text-xs font-medium text-[#1E293B]/70 dark:text-zinc-400">
-                                        {{ $product->stock > 5 ? 'En existencia' : ($product->stock > 0 ? 'Pocas unidades' : 'Agotado') }}
-                                    </span>
                                 </div>
                                 <div class="flex items-center gap-1">
-                                    <flux:button href="{{ route('products.edit', $product->id) }}" size="sm" variant="ghost" icon="pencil-square">Editar</flux:button>
-                                    <form action="{{ route('products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <flux:button type="submit" size="sm" variant="danger" icon="trash" aria-label="Eliminar {{ $product->name }}" />
-                                    </form>
+                                    @unless ($product->trashed())
+                                        <flux:button href="{{ route('products.edit', $product->id) }}" size="sm" variant="ghost" icon="pencil-square">Editar</flux:button>
+                                        <form action="{{ route('products.destroy', $product->id) }}" method="POST" onsubmit="return confirm('¿Seguro que deseas eliminar este producto?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <flux:button type="submit" size="sm" variant="danger" icon="trash" aria-label="Eliminar {{ $product->name }}" />
+                                        </form>
+                                    @endunless
                                 </div>
                             </div>
                         </div>

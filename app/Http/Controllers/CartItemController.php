@@ -12,16 +12,26 @@ use Illuminate\View\View;
 
 class CartItemController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        $cartItems = CartItem::with([
-            'cart' => fn ($query) => $query->withTrashed()->with('user'),
-            'product' => fn ($query) => $query->withTrashed(),
-        ])
-            ->latest()
-            ->paginate(10);
+        $filters = $request->validate([
+            'status' => ['nullable', Rule::in(['all', 'deleted'])],
+        ]);
 
-        return view('admin.carts.items.index', compact('cartItems'));
+        $cartItems = CartItem::withTrashed()
+            ->with([
+                'cart' => fn ($query) => $query->withTrashed()->with('user'),
+                'product' => fn ($query) => $query->withTrashed(),
+            ])
+            ->when(($filters['status'] ?? 'all') === 'deleted', fn ($query) => $query->onlyTrashed())
+            ->when(($filters['status'] ?? 'all') === 'all', fn ($query) => $query->withoutTrashed())
+            ->latest()
+            ->paginate(10)
+            ->withQueryString();
+
+        $statusOptions = ['all' => 'Vigentes', 'deleted' => 'Eliminados'];
+
+        return view('admin.carts.items.index', compact('cartItems', 'statusOptions'));
     }
 
     public function create(): View

@@ -12,7 +12,7 @@ class StoreCatalogTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_homepage_carousel_only_displays_featured_active_products_with_images(): void
+    public function test_homepage_carousel_displays_featured_active_products_with_or_without_images(): void
     {
         $category = Category::create([
             'name' => 'Audio',
@@ -72,7 +72,8 @@ class StoreCatalogTest extends TestCase
             ->assertSee('Audífonos destacados')
             ->assertSee('audifonos.jpg')
             ->assertSee(route('store.show', 'audifonos-destacados'))
-            ->assertDontSee('Destacado sin imagen')
+            ->assertSee('Destacado sin imagen')
+            ->assertSee(asset('images/product-placeholder.svg'), false)
             ->assertDontSee('Producto normal con imagen')
             ->assertDontSee('Destacado inactivo');
     }
@@ -131,6 +132,7 @@ class StoreCatalogTest extends TestCase
 
         $response->assertOk()
             ->assertSee('Mouse inalámbrico')
+            ->assertSee(asset('images/product-placeholder.svg'), false)
             ->assertDontSee('Producto oculto')
             ->assertDontSee('Agregar al carrito');
     }
@@ -251,6 +253,29 @@ class StoreCatalogTest extends TestCase
             ->assertSee('teclado-lateral.jpg')
             ->assertSee('Agregar al carrito (próximamente)')
             ->assertSee('disabled', false);
+    }
+
+    public function test_customer_sees_a_default_image_when_a_product_has_no_image(): void
+    {
+        $category = Category::create([
+            'name' => 'Computación',
+            'status' => true,
+        ]);
+
+        Product::create([
+            'category_id' => $category->id,
+            'name' => 'Producto sin imagen',
+            'slug' => 'producto-sin-imagen',
+            'price' => 499.99,
+            'stock' => 2,
+            'featured' => false,
+            'status' => true,
+        ]);
+
+        $this->get(route('store.show', 'producto-sin-imagen'))
+            ->assertOk()
+            ->assertSee('Producto sin imagen')
+            ->assertSee(asset('images/product-placeholder.svg'), false);
     }
 
     public function test_customer_cannot_open_inactive_product_details(): void
