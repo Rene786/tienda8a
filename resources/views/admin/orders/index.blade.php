@@ -40,7 +40,7 @@
                                 <span class="mt-1 block"><flux:badge color="red">Eliminado</flux:badge></span>
                             @endif
                         </flux:table.cell>
-                        <flux:table.cell>{{ ucfirst($order->payment_status) }}</flux:table.cell>
+                        <flux:table.cell>{{ $order->paymentStatusLabel() }}</flux:table.cell>
                         <flux:table.cell>{{ $order->items_count }}</flux:table.cell>
                         <flux:table.cell>
                             @unless ($order->trashed())

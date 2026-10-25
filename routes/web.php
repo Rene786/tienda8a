@@ -8,6 +8,7 @@ use App\Http\Controllers\ContactController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\OrderItemController;
+use App\Http\Controllers\PayPalController;
 use App\Http\Controllers\PdfDownloadController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductFileController;
@@ -55,6 +56,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/my-cart/items/{product}', [StoreCartController::class, 'store'])->name('store-cart.items.store');
     Route::patch('/my-cart/items/{cartItem}', [StoreCartController::class, 'update'])->name('store-cart.items.update');
     Route::delete('/my-cart/items/{cartItem}', [StoreCartController::class, 'destroy'])->name('store-cart.items.destroy');
+    Route::post('/checkout/paypal', [PayPalController::class, 'checkout'])->name('paypal.checkout');
+    Route::get('/checkout/paypal/return', [PayPalController::class, 'returnFromPayPal'])->name('paypal.return');
+    Route::get('/checkout/paypal/cancel', [PayPalController::class, 'cancel'])->name('paypal.cancel');
 });
 
 // Rutas exclusivas para administradores

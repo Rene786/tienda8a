@@ -15,6 +15,9 @@
         @error('cart')
             <flux:callout variant="danger" class="mb-5">{{ $message }}</flux:callout>
         @enderror
+        @error('payment')
+            <flux:callout variant="danger" class="mb-5">{{ $message }}</flux:callout>
+        @enderror
 
         @if ($items->isEmpty())
             <flux:card class="py-12 text-center">
@@ -77,11 +80,24 @@
 
                 <aside>
                     <flux:card class="lg:sticky lg:top-6">
+                        <flux:badge color="amber">PayPal Sandbox</flux:badge>
                         <h2 class="text-lg font-semibold">Resumen</h2>
                         <div class="mt-4 flex justify-between border-t border-zinc-200 pt-4 text-base font-semibold dark:border-white/10">
                             <span>Total</span>
                             <span>${{ number_format($total, 2) }}</span>
                         </div>
+                        @php($canCheckout = $items->every(fn ($item) => $item->product && $item->product->status && $item->quantity <= $item->product->stock))
+                        @if ($canCheckout)
+                            <form action="{{ route('paypal.checkout') }}" method="POST" class="mt-5">
+                                @csrf
+                                <flux:button type="submit" variant="primary" icon="credit-card" class="techstore-primary-button w-full">
+                                    Pagar con PayPal
+                                </flux:button>
+                            </form>
+                        @else
+                            <p class="mt-4 text-sm text-amber-700 dark:text-amber-400">Actualiza o quita los productos no disponibles para continuar.</p>
+                        @endif
+                        <p class="mt-3 text-xs text-zinc-500 dark:text-zinc-400">Pago de prueba: no se realizan cobros reales.</p>
                     </flux:card>
                 </aside>
             </div>

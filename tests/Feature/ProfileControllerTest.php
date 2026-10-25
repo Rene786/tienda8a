@@ -25,6 +25,26 @@ class ProfileControllerTest extends TestCase
             ->assertRedirect(route('login'));
     }
 
+    public function test_profile_labels_a_paypal_sandbox_payment_while_order_is_paid_and_processing(): void
+    {
+        $user = User::factory()->create();
+        $order = $user->orders()->create([
+            'order_number' => 'TS-SANDBOX-'.$user->id,
+            'total' => 1299.99,
+            'status' => 'processing',
+            'payment_status' => 'paid',
+            'paypal_order_id' => 'PAYPAL-ORDER-'.$user->id,
+        ]);
+
+        $this->actingAs($user)
+            ->get(route('profile.edit'))
+            ->assertOk()
+            ->assertSee($order->order_number)
+            ->assertSee('Pago de prueba aprobado')
+            ->assertSee('Processing')
+            ->assertDontSee('Paid');
+    }
+
     #[DataProvider('accountRoles')]
     public function test_profile_shows_only_the_authenticated_users_orders_for_each_role(string $role): void
     {

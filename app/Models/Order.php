@@ -19,6 +19,7 @@ class Order extends Model
         'status',
         'payment_status',
         'shipping_address',
+        'paypal_order_id',
     ];
 
     protected function casts(): array
@@ -26,6 +27,21 @@ class Order extends Model
         return [
             'total' => 'decimal:2',
         ];
+    }
+
+    public function paymentStatusLabel(): string
+    {
+        if ($this->payment_status === 'paid' && $this->paypal_order_id !== null) {
+            return 'Pago de prueba aprobado';
+        }
+
+        return match ($this->payment_status) {
+            'pending' => 'Pendiente',
+            'paid' => 'Pagado',
+            'failed' => 'Fallido',
+            'refunded' => 'Reembolsado',
+            default => ucfirst((string) $this->payment_status),
+        };
     }
 
     public function user(): BelongsTo

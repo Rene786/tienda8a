@@ -58,7 +58,7 @@
                                     <flux:table.cell>{{ $order->created_at?->format('d/m/Y') }}</flux:table.cell>
                                     <flux:table.cell>${{ number_format((float) $order->total, 2) }}</flux:table.cell>
                                     <flux:table.cell><flux:badge color="blue">{{ ucfirst($order->status) }}</flux:badge></flux:table.cell>
-                                    <flux:table.cell>{{ ucfirst($order->payment_status) }}</flux:table.cell>
+                                    <flux:table.cell>{{ $order->paymentStatusLabel() }}</flux:table.cell>
                                     <flux:table.cell>{{ $order->items_count }}</flux:table.cell>
                                 </flux:table.row>
                             @empty
