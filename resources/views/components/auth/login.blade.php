@@ -24,7 +24,13 @@ new class extends Component
 
         session()->regenerate();
 
-        $this->redirectIntended('/home');
+        if (Auth::user()->isAdmin()) {
+            $this->redirectIntended(route('home'));
+
+            return;
+        }
+
+        $this->redirect(url('/'));
     }
 };
 ?>

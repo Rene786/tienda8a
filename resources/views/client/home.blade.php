@@ -13,8 +13,12 @@
                     <flux:button href="{{ route('store') }}" variant="primary" icon="arrow-right" class="techstore-primary-button">Explorar catálogo</flux:button>
                     <flux:button href="{{ route('about') }}" variant="ghost">Conoce TechStore</flux:button>
                     @auth
-                        <flux:button href="{{ route('products.index') }}" variant="ghost">Administrar productos</flux:button>
-                        <flux:button href="{{ route('categories.index') }}" variant="ghost">Ver categorías</flux:button>
+                        @if (auth()->user()->isAdmin())
+                            <flux:button href="{{ route('products.index') }}" variant="ghost">Administrar productos</flux:button>
+                            <flux:button href="{{ route('categories.index') }}" variant="ghost">Ver categorías</flux:button>
+                        @else
+                            <flux:button href="{{ route('profile.edit') }}" variant="ghost">Mi perfil</flux:button>
+                        @endif
                     @endauth
                 </div>
                 @guest

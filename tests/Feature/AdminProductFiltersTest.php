@@ -18,8 +18,9 @@ class AdminProductFiltersTest extends TestCase
             'name' => 'Administrador',
             'email' => 'admin-products@example.test',
             'password' => 'password',
-            'role' => 'admin',
         ]);
+        $admin->role = 'admin';
+        $admin->save();
 
         $category = Category::create([
             'name' => 'Accesorios',
@@ -70,8 +71,9 @@ class AdminProductFiltersTest extends TestCase
             'name' => 'Administrador',
             'email' => 'admin-list@example.test',
             'password' => 'password',
-            'role' => 'admin',
         ]);
+        $admin->role = 'admin';
+        $admin->save();
 
         $category = Category::create([
             'name' => 'Accesorios',

@@ -16,14 +16,24 @@
     <header class="border-b border-white/10 bg-[#0F172A] text-white">
         <div class="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 py-3">
-                <a href="{{ auth()->check() ? route('home') : url('/') }}" class="text-lg font-semibold tracking-tight text-white">
+                <a href="{{ auth()->user()?->isAdmin() ? route('home') : url('/') }}" class="text-lg font-semibold tracking-tight text-white">
                     TechStore
                 </a>
                 @auth
-                    <form method="POST" action="/logout">
-                        @csrf
-                        <flux:button type="submit" variant="ghost" size="sm">Salir</flux:button>
-                    </form>
+                    <div class="flex items-center gap-2">
+                        <flux:button href="{{ route('store-cart.index') }}" variant="ghost" size="sm" icon="shopping-cart">
+                            Mi carrito
+                            @php($cartItemCount = auth()->user()->cart?->items()->sum('quantity') ?? 0)
+                            @if ($cartItemCount > 0)
+                                <span class="ml-1 rounded-full bg-blue-500 px-2 py-0.5 text-xs text-white">{{ $cartItemCount }}</span>
+                            @endif
+                        </flux:button>
+                        <flux:button href="{{ route('profile.edit') }}" variant="ghost" size="sm">Mi perfil</flux:button>
+                        <form method="POST" action="/logout">
+                            @csrf
+                            <flux:button type="submit" variant="ghost" size="sm">Salir</flux:button>
+                        </form>
+                    </div>
                 @else
                     <div class="flex items-center gap-2">
                         <flux:button href="{{ route('login') }}" variant="ghost" size="sm">Iniciar sesión</flux:button>
@@ -33,18 +43,26 @@
             </div>
 
             @auth
-                <flux:navbar scrollable class="-my-px">
-                    <flux:navbar.item href="{{ route('home') }}">Inicio</flux:navbar.item>
-                    <flux:navbar.item href="{{ route('store') }}">Catálogo</flux:navbar.item>
-                    <flux:navbar.item href="{{ route('products.index') }}">Productos</flux:navbar.item>
-                    {{-- <flux:navbar.item href="{{ route('product-files.index') }}">Archivos</flux:navbar.item> --}}
-                    <flux:navbar.item href="{{ route('categories.index') }}">Categorías</flux:navbar.item>
-                    <flux:navbar.item href="{{ route('carts.index') }}">Carritos</flux:navbar.item>
-                    <flux:navbar.item href="{{ route('cart-items.index') }}">Artículos</flux:navbar.item>
-                    <flux:navbar.item href="{{ route('orders.index') }}">Pedidos</flux:navbar.item>
-                    <flux:navbar.item href="{{ route('order-items.index') }}">Artículos de pedido</flux:navbar.item>
-                    <flux:navbar.item href="{{ route('users.index') }}">Usuarios</flux:navbar.item>
-                </flux:navbar>
+                @if (auth()->user()->isAdmin())
+                    <flux:navbar scrollable class="-my-px">
+                        <flux:navbar.item href="{{ route('home') }}">Inicio</flux:navbar.item>
+                        <flux:navbar.item href="{{ route('store') }}">Catálogo</flux:navbar.item>
+                        <flux:navbar.item href="{{ route('products.index') }}">Productos</flux:navbar.item>
+                        <flux:navbar.item href="{{ route('categories.index') }}">Categorías</flux:navbar.item>
+                        <flux:navbar.item href="{{ route('carts.index') }}">Carritos</flux:navbar.item>
+                        <flux:navbar.item href="{{ route('cart-items.index') }}">Artículos</flux:navbar.item>
+                        <flux:navbar.item href="{{ route('orders.index') }}">Pedidos</flux:navbar.item>
+                        <flux:navbar.item href="{{ route('order-items.index') }}">Artículos de pedido</flux:navbar.item>
+                        <flux:navbar.item href="{{ route('users.index') }}">Usuarios</flux:navbar.item>
+                    </flux:navbar>
+                @else
+                    <flux:navbar scrollable class="-my-px">
+                        <flux:navbar.item href="{{ url('/') }}">Inicio</flux:navbar.item>
+                        <flux:navbar.item href="{{ route('store') }}">Catálogo</flux:navbar.item>
+                        <flux:navbar.item href="{{ route('about') }}">Acerca de nosotros</flux:navbar.item>
+                        <flux:navbar.item href="{{ route('contact') }}">Contacto</flux:navbar.item>
+                    </flux:navbar>
+                @endif
             @else
                 <flux:navbar scrollable class="-my-px">
                     <flux:navbar.item href="{{ url('/') }}">Inicio</flux:navbar.item>

@@ -42,6 +42,8 @@ class AdminPaginationTest extends TestCase
             'email' => 'admin-pagination@example.test',
             'password' => 'password',
         ]);
+        $user->role = 'admin';
+        $user->save();
 
         for ($orderNumber = 1; $orderNumber <= 11; $orderNumber++) {
             Order::create([

@@ -17,7 +17,7 @@ class PdfDownloadTest extends TestCase
 
     public function test_dashboard_provides_a_link_to_the_pdf_download_history(): void
     {
-        $this->actingAs(User::factory()->create())
+        $this->actingAs(User::factory()->create(['role' => 'admin']))
             ->get(route('home'))
             ->assertOk()
             ->assertSee('Historial de descargas PDF')
@@ -26,7 +26,7 @@ class PdfDownloadTest extends TestCase
 
     public function test_authenticated_user_can_view_the_pdf_download_history(): void
     {
-        $user = User::factory()->create(['name' => 'Usuario de prueba']);
+        $user = User::factory()->create(['name' => 'Usuario de prueba', 'role' => 'admin']);
         PdfDownload::create([
             'user_id' => $user->id,
             'file_name' => 'reporte-products-techstore.pdf',
@@ -52,7 +52,7 @@ class PdfDownloadTest extends TestCase
 
     public function test_dashboard_pdf_download_is_saved_to_the_history(): void
     {
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => 'admin']);
 
         $this->actingAs($user)
             ->get(route('reports.dashboard', 'products'))
@@ -71,7 +71,7 @@ class PdfDownloadTest extends TestCase
         Storage::fake('public');
         Storage::disk('public')->put('manuales/guia.pdf', 'Contenido PDF');
 
-        $user = User::factory()->create();
+        $user = User::factory()->create(['role' => 'admin']);
         $category = Category::create([
             'name' => 'Accesorios',
             'status' => true,

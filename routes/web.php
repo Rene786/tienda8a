@@ -11,6 +11,8 @@ use App\Http\Controllers\OrderItemController;
 use App\Http\Controllers\PdfDownloadController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProductFileController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\StoreCartController;
 use App\Http\Controllers\UserController;
 use App\Models\Product;
 use Illuminate\Support\Facades\Route;
@@ -45,17 +47,24 @@ Route::get('/store/{slug}', [ProductController::class, 'catalogProduct'])->name(
 Route::livewire('/login', 'auth.login')->name('login');
 Route::livewire('/register', 'auth.register')->name('register');
 
-// rutas para el dashboard y reportes
+// Rutas de perfil para usuarios autenticados
 Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::get('/my-cart', [StoreCartController::class, 'index'])->name('store-cart.index');
+    Route::post('/my-cart/items/{product}', [StoreCartController::class, 'store'])->name('store-cart.items.store');
+    Route::patch('/my-cart/items/{cartItem}', [StoreCartController::class, 'update'])->name('store-cart.items.update');
+    Route::delete('/my-cart/items/{cartItem}', [StoreCartController::class, 'destroy'])->name('store-cart.items.destroy');
+});
+
+// Rutas exclusivas para administradores
+Route::middleware(['auth', 'admin'])->group(function () {
     Route::get('/home', [DashboardController::class, 'index'])->name('home');
     Route::get('/pdf-downloads', [PdfDownloadController::class, 'index'])->name('pdf-downloads.index');
     Route::get('/reports/dashboard/{metric}', [DashboardController::class, 'report'])
         ->whereIn('metric', ['daily-sales', 'monthly-sales', 'products', 'users', 'inventory'])
         ->name('reports.dashboard');
-});
 
-// Rutas para administrar productos
-Route::middleware('auth')->group(function () {
     Route::get('product-files/{productFile}/download', [ProductFileController::class, 'download'])
         ->name('product-files.download');
     Route::resource('categories', CategoryController::class)->except('show');

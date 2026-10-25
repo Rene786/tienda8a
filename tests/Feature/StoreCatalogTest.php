@@ -235,6 +235,7 @@ class StoreCatalogTest extends TestCase
             'stock' => 4,
             'image' => 'teclado.jpg',
             'image_2' => 'teclado-lateral.jpg',
+            'image_3' => 'teclado-detalle.jpg',
             'featured' => true,
             'status' => true,
         ]);
@@ -251,8 +252,16 @@ class StoreCatalogTest extends TestCase
             ->assertSee('$1,299.99')
             ->assertSee('4 en existencia')
             ->assertSee('teclado-lateral.jpg')
-            ->assertSee('Agregar al carrito (próximamente)')
-            ->assertSee('disabled', false);
+            ->assertSee('teclado-detalle.jpg')
+            ->assertSee('aria-label="Galería de imágenes del producto"', false)
+            ->assertSee('aria-label="Imagen anterior"', false)
+            ->assertSee('aria-label="Imagen siguiente"', false)
+            ->assertSee('aria-label="Mostrar imagen 3"', false)
+            ->assertSee('x-text="activeSlide + 1"', false)
+            ->assertSee('/ 3')
+            ->assertSee('Inicia sesión para comprar')
+            ->assertSee(route('login'), false)
+            ->assertDontSee('Agregar al carrito (próximamente)');
     }
 
     public function test_customer_sees_a_default_image_when_a_product_has_no_image(): void
