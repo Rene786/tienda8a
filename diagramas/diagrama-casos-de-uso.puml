@@ -1,0 +1,65 @@
+@startuml
+title Diagrama UML de casos de uso - TechStore
+left to right direction
+skinparam packageStyle rectangle
+
+actor Visitante
+actor "Usuario autenticado" as Usuario
+actor Cliente
+actor Administrador
+actor "PayPal Sandbox" as PayPal
+
+Usuario <|-- Cliente
+Usuario <|-- Administrador
+
+rectangle TechStore {
+  usecase "Consultar catalogo" as UC_Catalogo
+  usecase "Ver detalle de producto" as UC_Detalle
+  usecase "Registrarse" as UC_Registro
+  usecase "Iniciar sesion" as UC_Login
+  usecase "Enviar mensaje de contacto" as UC_Contacto
+  usecase "Actualizar perfil" as UC_Perfil
+  usecase "Consultar carrito" as UC_Carrito
+  usecase "Agregar producto" as UC_Agregar
+  usecase "Actualizar cantidad" as UC_Cantidad
+  usecase "Quitar producto" as UC_Quitar
+  usecase "Finalizar compra" as UC_Compra
+  usecase "Crear pedido" as UC_Pedido
+  usecase "Pagar con PayPal Sandbox" as UC_Pago
+  usecase "Administrar productos y archivos" as UC_Productos
+  usecase "Administrar categorias" as UC_Categorias
+  usecase "Administrar usuarios" as UC_Usuarios
+  usecase "Administrar pedidos" as UC_Pedidos
+  usecase "Consultar panel y reportes" as UC_Reportes
+  usecase "Descargar PDF de producto" as UC_Descarga
+  usecase "Consultar registros de descargas PDF" as UC_Registros
+}
+
+Visitante --> UC_Catalogo
+Visitante --> UC_Detalle
+Visitante --> UC_Registro
+Visitante --> UC_Login
+Visitante --> UC_Contacto
+
+Cliente --> UC_Perfil
+Cliente --> UC_Carrito
+Cliente --> UC_Agregar
+Cliente --> UC_Cantidad
+Cliente --> UC_Quitar
+Cliente --> UC_Compra
+Cliente --> UC_Catalogo
+Cliente --> UC_Detalle
+
+UC_Compra .> UC_Pedido : <<include>>
+UC_Compra .> UC_Pago : <<include>>
+PayPal --> UC_Pago
+
+Administrador --> UC_Productos
+Administrador --> UC_Categorias
+Administrador --> UC_Usuarios
+Administrador --> UC_Pedidos
+Administrador --> UC_Reportes
+Administrador --> UC_Descarga
+Administrador --> UC_Registros
+
+@enduml

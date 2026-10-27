@@ -1,0 +1,115 @@
+@startuml
+title Diagrama de clases - TechStore
+skinparam classAttributeIconSize 0
+hide empty members
+
+class User {
+  +id: int
+  +name: string
+  +email: string
+  +password: string
+  +role: string
+  +isAdmin(): bool
+  +isClient(): bool
+}
+
+class Category {
+  +id: int
+  +name: string
+  +description: text
+  +status: bool
+}
+
+class Product {
+  +id: int
+  +category_id: int
+  +name: string
+  +slug: string
+  +description: text
+  +price: decimal
+  +stock: int
+  +image: string
+  +image_2: string
+  +image_3: string
+  +featured: bool
+  +status: bool
+}
+
+class ProductFile {
+  +id: int
+  +product_id: int
+  +name: string
+  +file_path: string
+  +file_type: string
+  +isPdf(): bool
+}
+
+class Cart {
+  +id: int
+  +user_id: int
+}
+
+class CartItem {
+  +id: int
+  +cart_id: int
+  +product_id: int
+  +quantity: int
+}
+
+class Order {
+  +id: int
+  +user_id: int
+  +order_number: string
+  +total: decimal
+  +status: string
+  +payment_status: string
+  +shipping_address: text
+  +paypal_order_id: string
+  +paymentStatusLabel(): string
+}
+
+class OrderItem {
+  +id: int
+  +order_id: int
+  +product_id: int [nullable]
+  +product_name: string
+  +unit_price: decimal
+  +quantity: int
+  +subtotal: decimal
+}
+
+class PdfDownload {
+  +id: int
+  +user_id: int [nullable]
+  +product_file_id: int [nullable]
+  +file_name: string
+  +file_path: string
+  +downloaded_at: datetime
+  +ip_address: string
+  +user_agent: text
+}
+
+class PayPalService <<service>> {
+  +hasSandboxCredentials(): bool
+  +createOrder(order: Order): array
+  +captureOrder(paypalOrderId: string): array
+}
+
+User "1" -- "0..1" Cart : posee
+User "1" -- "0..*" Order : realiza
+User "0..1" -- "0..*" PdfDownload : descarga
+Category "1" -- "0..*" Product : clasifica
+Product "1" -- "0..*" ProductFile : ofrece
+Cart "1" *-- "0..*" CartItem : contiene
+Product "1" -- "0..*" CartItem : se agrega a
+Order "1" *-- "0..*" OrderItem : incluye
+Product "0..1" -- "0..*" OrderItem : referencia
+ProductFile "0..1" -- "0..*" PdfDownload : registra
+PayPalService ..> Order : crea y captura pagos
+
+note right of CartItem
+  Un producto aparece como máximo
+  una vez en cada carrito.
+end note
+
+@enduml
